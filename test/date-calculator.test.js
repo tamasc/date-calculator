@@ -34,6 +34,9 @@ describe('calculator', function() {
     it('returns a correct date when turnAroundTime is 1 working day', function() {
       assert.equal(calculator.calculateDueDate('2018.07.09 9:00', 8),  '2018.07.10 9:00');
     });
+    it('returns a correct date when dueDate falls into weekend', function() {
+      assert.equal(calculator.calculateDueDate('2018.07.06 9:00', 16),  '2018.07.10 9:00');
+    });
   });
 
   describe('isNotWorkingDay', function() {

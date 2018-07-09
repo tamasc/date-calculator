@@ -14,7 +14,10 @@ class DateCalculator {
             submitDateObject.getTime() +
             DateCalculator.convertToFullDayInMiliSeconds(turnAroundTimeInWorkingDays) +
             DateCalculator.getHoursInMiliSeconds(turnAroundTimeRemainingHours);
-        const dueDateObject = new Date(dueDateInMiliSeconds);
+        let dueDateObject = new Date(dueDateInMiliSeconds);
+        if (this.isNotWorkingDay(dueDateObject.getDay())) {
+            dueDateObject = new Date(dueDateObject.getTime() + DateCalculator.getHoursInMiliSeconds(48));
+        }
         return DateCalculator.formatDate(dueDateObject);
     }
 
@@ -53,7 +56,7 @@ class DateCalculator {
     }
 
     static convertToFullDayInMiliSeconds(workingDay) {
-        return DateCalculator.getHoursInMiliSeconds(turnAroundTimeInWorkingDays * 24);
+        return DateCalculator.getHoursInMiliSeconds(workingDay * 24);
     }
 
     static formatDate(dateObject) {
