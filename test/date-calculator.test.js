@@ -22,11 +22,17 @@ describe('calculator', function() {
     it('throws an error if the day is not a working day', function() {
       assert.throws(calculator.calculateDueDate.bind(calculator, '2018.07.08 15:55', 18));
     });
-    it('throws an error if the time after the working hours', function() {
+    it('throws an error if the time is after the working hours', function() {
       assert.throws(calculator.calculateDueDate.bind(calculator, '2018.07.09 17:01', 18));
     });
     it('throws an error if the time before the working hours', function() {
       assert.throws(calculator.calculateDueDate.bind(calculator, '2018.07.09 7:59', 18));
+    });
+    it('not throws error at the beginning of the working hours', function() {
+      assert.equal(typeof calculator.calculateDueDate('2018.07.09 9:00', 18), 'string');
+    });
+    it('returns a correct date when turnAroundTime is 1 working day', function() {
+      assert.equal(calculator.calculateDueDate('2018.07.09 9:00', 8),  '2018.07.10 9:00');
     });
   });
 

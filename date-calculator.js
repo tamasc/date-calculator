@@ -2,13 +2,20 @@ class DateCalculator {
     constructor(workingDays, workingHours) {
         this.workingDays = workingDays;
         this.workingHours = workingHours;
-        this.workingHoursADay = this.workingDays.end - this.workingDays.start;
+        this.workingHoursADay = this.workingHours.end - this.workingHours.start;
     }
 
     calculateDueDate(submitDate, turnAroundTime) {
         const submitDateObject = new Date(submitDate);
         this.checkSubmissionValidity(submitDateObject);
-        return '';
+        const turnAroundTimeRemainingHours = turnAroundTime % this.workingHoursADay;
+        const turnAroundTimeInWorkingDays = Math.trunc(turnAroundTime / this.workingHoursADay);
+        const dueDateInMiliSeconds =
+            submitDateObject.getTime() +
+            DateCalculator.convertToFullDayInMiliSeconds(turnAroundTimeInWorkingDays) +
+            DateCalculator.getHoursInMiliSeconds(turnAroundTimeRemainingHours);
+        const dueDateObject = new Date(dueDateInMiliSeconds);
+        return DateCalculator.formatDate(dueDateObject);
     }
 
     checkSubmissionValidity(submitDateObject) {
@@ -39,6 +46,26 @@ class DateCalculator {
     isTooLate(submitHour, submitMinutes) {
         const isTheEndOfTheWorkingDay = this.workingHours.end === submitHour && submitMinutes === 0;
         return !isTheEndOfTheWorkingDay && this.workingHours.end <= submitHour;
+    }
+
+    static getHoursInMiliSeconds(hours) {
+        return hours*60*60*1000;
+    }
+
+    static convertToFullDayInMiliSeconds(workingDay) {
+        return DateCalculator.getHoursInMiliSeconds(turnAroundTimeInWorkingDays * 24);
+    }
+
+    static formatDate(dateObject) {
+        const addTrailingZero = (number) => ('0' + number).slice(-2);
+
+        const year = dateObject.getFullYear();
+        const month = addTrailingZero(dateObject.getMonth() + 1);
+        const day = addTrailingZero(dateObject.getDate());
+        const hours = dateObject.getHours();
+        const minutes = addTrailingZero(dateObject.getMinutes());
+
+        return `${year}.${month}.${day} ${hours}:${minutes}`;
     }
 }
 
