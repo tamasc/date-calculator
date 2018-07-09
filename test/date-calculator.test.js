@@ -2,11 +2,12 @@ const assert = require('assert');
 const DateCalculator = require('../date-calculator');
 
 describe('calculator', function() {
-  const calculator = new DateCalculator(
-    ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-    { start: 9, end: 17 }
-  );
+  // test setup
+  const workingDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const workingHours = { start: 9, end: 17 };
+  const calculator = new DateCalculator(workingDays, workingHours);
 
+  // test cases
   it('is an instance of DateCalculator', function() {
     assert.ok(calculator instanceof DateCalculator);
   });
