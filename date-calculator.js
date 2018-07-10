@@ -5,7 +5,7 @@ class DateCalculator {
         this.workingHoursADay = this.workingHours.end - this.workingHours.start;
     }
 
-    calculateDueDate(submitDate, turnAroundTime) {
+    calculateDueDate(submitDate, turnAroundTime = 0) {
         const submitDateObject = new Date(submitDate);
         this.checkSubmissionValidity(submitDateObject);
         const turnAroundTimeRemainingHours = turnAroundTime % this.workingHoursADay;
@@ -15,6 +15,15 @@ class DateCalculator {
             DateCalculator.convertToFullDayInMiliSeconds(turnAroundTimeInWorkingDays) +
             DateCalculator.getHoursInMiliSeconds(turnAroundTimeRemainingHours);
         let dueDateObject = new Date(dueDateInMiliSeconds);
+        if (this.isTooEarly(dueDateObject.getHours()) || this.isTooLate(dueDateObject.getHours(), dueDateObject.getMinutes())) {
+            const exceedingTime =
+                (dueDateObject.getHours() < this.workingHours.end ? dueDateObject.getHours() : dueDateObject.getHours() + 24) -
+                this.workingHours.end;
+            dueDateObject.setHours(this.workingHours.start)
+            dueDateObject = new Date(dueDateObject.getTime() +
+                DateCalculator.getHoursInMiliSeconds(24) +
+                DateCalculator.getHoursInMiliSeconds(exceedingTime));
+        }
         if (this.isNotWorkingDay(dueDateObject.getDay())) {
             dueDateObject = new Date(dueDateObject.getTime() + DateCalculator.getHoursInMiliSeconds(48));
         }
