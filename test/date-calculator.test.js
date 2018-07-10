@@ -43,6 +43,15 @@ describe('calculator', function() {
     it('returns a correct date when dueDate would fall into non-working hours and weekend', function() {
       assert.equal(calculator.calculateDueDate('2018.07.05 9:00', 20),  '2018.07.09 13:00');
     });
+    it('returns a correct date when dueDate would fall into non-working hours and weekend', function() {
+      assert.equal(calculator.calculateDueDate('2018.07.05 9:00', 28),  '2018.07.10 13:00');
+    });
+    it('returns a correct date when dueDate passes a weekend', function() {
+      assert.equal(calculator.calculateDueDate('2018.07.05 9:00', 36),  '2018.07.11 13:00');
+    });
+    it('returns a correct date when dueDate passes 3 weekends', function() {
+      assert.equal(calculator.calculateDueDate('2018.07.05 9:00', 100),  '2018.07.23 13:00');
+    });
   });
 
   describe('isNotWorkingDay', function() {

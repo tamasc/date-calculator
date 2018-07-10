@@ -3,6 +3,7 @@ class DateCalculator {
         this.workingDays = workingDays;
         this.workingHours = workingHours;
         this.workingHoursADay = this.workingHours.end - this.workingHours.start;
+        this.workingDaysAWeek = workingDays.length;
     }
 
     calculateDueDate(submitDate, turnAroundTime = 0) {
@@ -49,13 +50,15 @@ class DateCalculator {
     getDueDateInMiliSeconds(submitDateObject, turnAroundTime) {
         const turnAroundTimeRemainingHours = turnAroundTime % this.workingHoursADay;
         const turnAroundTimeInWorkingDays = Math.trunc(turnAroundTime / this.workingHoursADay);
+        const dayIndex = this.workingDays.indexOf(this.getDay(submitDateObject.getDay()));
+        const weekendsPassed = Math.trunc((dayIndex + turnAroundTimeInWorkingDays) / this.workingDaysAWeek);
         return submitDateObject.getTime() +
-            DateCalculator.convertToFullDayInMiliSeconds(turnAroundTimeInWorkingDays) +
+            DateCalculator.convertToFullDayInMiliSeconds(turnAroundTimeInWorkingDays + weekendsPassed * 2) +
             DateCalculator.getHoursInMiliSeconds(turnAroundTimeRemainingHours);
     }
 
     isNotWorkingDay(numberOfDay) {
-        const day = DateCalculator.daysOfTheWeek[numberOfDay];
+        const day = this.getDay(numberOfDay);
         return !this.workingDays.includes(day);
     }
 
@@ -68,12 +71,16 @@ class DateCalculator {
         return !isTheEndOfTheWorkingDay && this.workingHours.end <= submitHour;
     }
 
+    getDay(numberOfDay) {
+        return DateCalculator.daysOfTheWeek[numberOfDay];
+    }
+
     static getHoursInMiliSeconds(hours) {
         return hours*60*60*1000;
     }
 
-    static convertToFullDayInMiliSeconds(workingDay) {
-        return DateCalculator.getHoursInMiliSeconds(workingDay * 24);
+    static convertToFullDayInMiliSeconds(workingDays) {
+        return DateCalculator.getHoursInMiliSeconds(workingDays * 24);
     }
 
     static formatDate(dateObject) {
