@@ -4,6 +4,7 @@ class DateCalculator {
         this.workingHours = workingHours;
         this.workingHoursADay = this.workingHours.end - this.workingHours.start;
         this.workingDaysAWeek = workingDays.length;
+        this.weekendDaysAWeek = DateCalculator.daysOfTheWeek.length - this.workingDaysAWeek;
     }
 
     calculateDueDate(submitDate, turnAroundTime = 0) {
@@ -40,12 +41,17 @@ class DateCalculator {
                 exceedingTimeInHours = exceedingTimeInHours + 24;
             }
             dueDateObject.setHours(this.workingHours.start)
-            dueDateObject = new Date(dueDateObject.getTime() +
+            dueDateObject = new Date(
+                dueDateObject.getTime() +
                 DateCalculator.getHoursInMiliSeconds(24) +
-                DateCalculator.getHoursInMiliSeconds(exceedingTimeInHours));
+                DateCalculator.getHoursInMiliSeconds(exceedingTimeInHours)
+            );
         }
         if (this.isNotWorkingDay(dueDateObject.getDay())) {
-            dueDateObject = new Date(dueDateObject.getTime() + DateCalculator.getHoursInMiliSeconds(48));
+            dueDateObject = new Date(
+                dueDateObject.getTime() +
+                DateCalculator.getHoursInMiliSeconds(24 * this.weekendDaysAWeek)
+            );
         }
         return dueDateObject;
     }
@@ -56,7 +62,7 @@ class DateCalculator {
         const submitDayIndex = this.workingDays.indexOf(this.getDay(submitDateObject.getDay()));
         const weekendsPassed = Math.trunc((submitDayIndex + turnAroundWorkingDays) / this.workingDaysAWeek);
         return submitDateObject.getTime() +
-            DateCalculator.convertToFullDayInMiliSeconds(turnAroundWorkingDays + weekendsPassed * 2) +
+            DateCalculator.convertToFullDayInMiliSeconds(turnAroundWorkingDays + weekendsPassed * this.weekendDaysAWeek) +
             DateCalculator.getHoursInMiliSeconds(turnAroundRemainingHours);
     }
 
