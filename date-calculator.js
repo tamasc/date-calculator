@@ -32,28 +32,9 @@ class DateCalculator {
     }
 
     getDueDateObject(submitDateObject, turnAroundTime) {
-        let dueDateObject = new Date(this.getDueDateInMiliSeconds(submitDateObject, turnAroundTime));
-        const dueDateHours = dueDateObject.getHours();
-        const dueDateMinutes = dueDateObject.getMinutes();
-        if (this.isTooEarly(dueDateHours) || this.isTooLate(dueDateHours, dueDateMinutes)) {
-            let exceedingTimeInHours = dueDateHours - this.workingHours.end;
-            if (dueDateHours < this.workingHours.end) {
-                exceedingTimeInHours = exceedingTimeInHours + 24;
-            }
-            dueDateObject.setHours(this.workingHours.start)
-            dueDateObject = new Date(
-                dueDateObject.getTime() +
-                DateCalculator.getHoursInMiliSeconds(24) +
-                DateCalculator.getHoursInMiliSeconds(exceedingTimeInHours)
-            );
-        }
-        if (this.isNotWorkingDay(dueDateObject.getDay())) {
-            dueDateObject = new Date(
-                dueDateObject.getTime() +
-                DateCalculator.getHoursInMiliSeconds(24 * this.weekendDaysAWeek)
-            );
-        }
-        return dueDateObject;
+        return new Date(
+            this.getDueDateInMiliSeconds(submitDateObject, turnAroundTime)
+        );
     }
 
     getDueDateInMiliSeconds(submitDateObject, turnAroundTime) {
